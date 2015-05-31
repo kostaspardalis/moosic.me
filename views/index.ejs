@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Moosic.me: Spotify Playlist Generator based on Last.fm similar tracks.">
+	<meta name="keywords" content="playlist, playlist generator, spotify playlist, similar tracks, music, last.fm playlist, playlist with similar songs">
+	<title>Moosic.me - Spotify Playlist Generator based on Last.fm similar tracks</title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+  
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><span id="moosic">Moosic</span>.me</a>
+			</div>
+
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a data-toggle="modal" data-target="#about">About</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	
+	<div class="main">
+		<div class="container">
+			
+			<div class="row" id="create-form">
+				<div class="col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
+					<div id="instructions">
+						<p>
+							Enter one or more tracks to generate a playlist with similar tracks.
+							Next you can add it to your Spotify account.
+						</p>
+					</div>
+					<form>
+						<div id="track-inputs">
+							<input type="text" name="name" placeholder="Enter a track">
+							<span class="btn-in-input"><button class="add-track">+</button></span>
+						</div>
+				
+						<input type="text" name="number" placeholder="Number of tracks" id="number">
+						<input type="text" name="duration" placeholder="Duration in minutes" id="duration">
+						
+						<label class="custom-checkbox">
+							<input type='checkbox' id="dissimilar">
+							<span></span>
+							Include less similar tracks
+						</label>
+						   
+						<br><br>
+						<input type="submit" value="Create playlist">
+					</form>
+				</div>
+			</div>
+
+			<div class="row" id="playlist-row">				
+				<div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">
+					<div id="static-btns">
+						<button type="button" class="btn-purple-lg" id="new-playlist"><i class="fa fa-plus fa-lg"></i> New playlist</button>
+						<button type="button" class="btn-purple-lg" id="add-spotify"><i class="fa fa-spotify fa-lg"></i> Add to Spotify</button>
+					</div>
+
+					<p id="playlist-info">
+						<span id="number-of-tracks"></span> - <span id="total-duration"></span>
+					</p>
+					
+					<ul class="list-group" id="playlist-ul"></ul>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	<div class="navbar navbar-default navbar-fixed-bottom hidden-xs">
+		<div class="container">
+			<p class="navbar-text pull-left">
+				Powered by 
+				<a href="http://last.fm/" target="_blank"><i class="fa fa-lastfm"></i> Last.fm</a> &amp;
+				<a href="http://spotify.com/" target="_blank"><i class="fa fa-spotify"></i> Spotify</a>
+			</p>
+			<p class="navbar-text pull-right">
+				<a href="https://github.com/kostaspardalis/moosic.me" target="_blank"><i class="fa fa-github"></i> Source</a> |
+				Built by <a href="https://github.com/kostaspardalis">Kostas Pardalis</a>
+			</p>
+		</div>
+	</div>
+
+	<div id="loading">
+		<p>Please wait...</p>
+		<p><img src="/images/loading.gif" /></p>
+		<p id="loading-msg"></p>
+	</div>
+	
+	<div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="aboutModalLabel">About</h4>
+				</div>
+				<div class="modal-body">
+					<h3>Moosic.me: Spotify Playlist Generator based on Last.fm similar tracks.</h3>
+					<br>
+					<p>
+						Moosic.me is a web application created for the course of Speech Processing in Department of Informatics of Ionian University.
+						This web application accepts as input a list of tracks by the user and generates a playlist with similar tracks, according to Last.fm.
+						Then the generated playlist can be added to the user's Spotify account with one click.  
+					</p>
+					
+					<br>
+					<h4>Build by Konstantinos Pardalis.</h4>
+					<p>
+						Konstantinos Pardalis is an undergraduate student at the Department of Informatics, Ionian University, Corfu, Greece. 
+					</p>
+					
+					<br>
+					<h4>Source code.</h4>
+					<p>
+					     The source code is available at <a href="https://github.com/kostaspardalis/moosic.me" target="_blank"><i class="fa fa-github"></i> Github</a>.
+					</p>
+				    
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script src="/javascript/lastfm.js"></script>
+	<script src="/javascript/spotify.js"></script>
+	<script src="/javascript/playlist.js"></script>
+	<script src="/javascript/code.js"></script>
+</body>
+</html>

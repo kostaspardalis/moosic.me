@@ -1,0 +1,39 @@
+<html>
+<head>
+<script>
+(function() {
+	
+	var params = new Object();
+	
+	var hash = window.location.hash.replace('#', '');
+	
+	var keyvalue = hash.split('&');
+	
+	for (var i=0; i<keyvalue.length; i++) {
+		var kv = keyvalue[i];
+	
+		var split = kv.indexOf('=');
+		
+		if (split != -1) {
+			var key = kv.substring(0, split);
+			var value = kv.substring(split + 1);
+			
+			params[key] = decodeURIComponent(value);
+	    }
+	};
+  
+	var postmsg_url = 'http://' + window.location.host;
+	
+	window.opener.postMessage(JSON.stringify({
+		access_token : params.access_token
+	}), postmsg_url);
+	
+	window.close();
+	
+})();
+</script>
+</head>
+<body>
+Please wait...
+</body>
+</html>
