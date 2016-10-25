@@ -4,8 +4,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="description" content="Moosic.me: Spotify Playlist Generator based on Last.fm similar tracks.">
-	<meta name="keywords" content="playlist, playlist generator, spotify playlist, similar tracks, music, last.fm playlist, playlist with similar songs">
+	<meta name="description" content="Moosic.me: Spotify Playlist Generator based on Last.fm similar tracks. With Moosic.me, you can find new music and songs that you like.">
+	<meta name="keywords" content="playlist, playlist generator, spotify playlist, similar tracks, find new music, music, last.fm playlist, similar songs">
 	<title>Moosic.me - Spotify Playlist Generator based on Last.fm similar tracks</title>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
-  
+
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container">
@@ -35,10 +35,10 @@
 			</div>
 		</div>
 	</nav>
-	
+
 	<div class="main">
 		<div class="container">
-			
+
 			<div class="row" id="create-form">
 				<div class="col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
 					<div id="instructions">
@@ -49,26 +49,27 @@
 					</div>
 					<form>
 						<div id="track-inputs">
-							<input type="text" name="name" placeholder="Enter a track">
-							<span class="btn-in-input"><button class="add-track">+</button></span>
+							<input type="text" name="name" placeholder="Enter a track" autocomplete="off">
+							<span class="btn-in-input"><button type="button" class="add-track" title="Add track">+</button></span>
+							<ul id="suggestions"></ul>
 						</div>
-				
+
 						<input type="text" name="number" placeholder="Number of tracks" id="number">
 						<input type="text" name="duration" placeholder="Duration in minutes" id="duration">
-						
-						<label class="custom-checkbox">
+
+					    <label class="custom-checkbox" title="This option changes the sorting of the total returned tracks from the less to the most similar.">
 							<input type='checkbox' id="dissimilar">
 							<span></span>
 							Include less similar tracks
 						</label>
-						   
+
 						<br><br>
 						<input type="submit" value="Create playlist">
 					</form>
 				</div>
 			</div>
 
-			<div class="row" id="playlist-row">				
+			<div class="row" id="playlist-row">
 				<div class="col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8">
 					<div id="static-btns">
 						<button type="button" class="btn-purple-lg" id="new-playlist"><i class="fa fa-plus fa-lg"></i> New playlist</button>
@@ -78,24 +79,25 @@
 					<p id="playlist-info">
 						<span id="number-of-tracks"></span> - <span id="total-duration"></span>
 					</p>
-					
-					<ul class="list-group" id="playlist-ul"></ul>
+					<ul class="list-group" id="playlist-ul">
+
+					</ul>
 				</div>
 			</div>
 
 		</div>
 	</div>
-	
+
 	<div class="navbar navbar-default navbar-fixed-bottom hidden-xs">
 		<div class="container">
 			<p class="navbar-text pull-left">
-				Powered by 
+				Powered by
 				<a href="http://last.fm/" target="_blank"><i class="fa fa-lastfm"></i> Last.fm</a> &amp;
 				<a href="http://spotify.com/" target="_blank"><i class="fa fa-spotify"></i> Spotify</a>
 			</p>
 			<p class="navbar-text pull-right">
 				<a href="https://github.com/kostaspardalis/moosic.me" target="_blank"><i class="fa fa-github"></i> Source</a> |
-				Built by <a href="https://github.com/kostaspardalis">Kostas Pardalis</a>
+				Built by <a href="http://www.kostaspardalis.com">Kostas Pardalis</a>
 			</p>
 		</div>
 	</div>
@@ -105,7 +107,7 @@
 		<p><img src="/images/loading.gif" /></p>
 		<p id="loading-msg"></p>
 	</div>
-	
+
 	<div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -114,26 +116,27 @@
 					<h4 class="modal-title" id="aboutModalLabel">About</h4>
 				</div>
 				<div class="modal-body">
-					<h3>Moosic.me: Spotify Playlist Generator based on Last.fm similar tracks.</h3>
+				    <h3>Moosic.me: Spotify Playlist Generator based on Last.fm similar tracks.</h3>
 					<br>
-					<p>
-						Moosic.me is a web application created for the course of Speech Processing in Department of Informatics of Ionian University.
-						This web application accepts as input a list of tracks by the user and generates a playlist with similar tracks, according to Last.fm.
-						Then the generated playlist can be added to the user's Spotify account with one click.  
-					</p>
-					
-					<br>
-					<h4>Build by Konstantinos Pardalis.</h4>
-					<p>
-						Konstantinos Pardalis is an undergraduate student at the Department of Informatics, Ionian University, Corfu, Greece. 
-					</p>
-					
-					<br>
-					<h4>Source code.</h4>
-					<p>
-					     The source code is available at <a href="https://github.com/kostaspardalis/moosic.me" target="_blank"><i class="fa fa-github"></i> Github</a>.
-					</p>
-				    
+				    <p>
+				    	Moosic.me is an open source web application created for the course of Speech Processing in Department of Informatics of Ionian University.
+				    	This web application accepts as input a list of tracks by the user and generates a playlist with similar tracks, according to Last.fm.
+				    	Then the generated playlist can be added to the user's Spotify account with one click.
+				    </p>
+
+   				    <br>
+				    <h4>Build by Konstantinos Pardalis.</h4>
+				    <p>
+				    	Konstantinos Pardalis holds a degree in Informatics, Ionian University, Corfu, Greece.
+				    	He is the lead developer of <a href="http://moosic.me" target="_blank">Moosic.me</a>, <a href="http://socialskip.org" target="_blank">SocialSkip.org</a> and <a href="http://mapito.org" target="_blank">Mapito.org</a>.
+				    </p>
+
+				    <br>
+				    <h4>Source code.</h4>
+				    <p>
+				     	The source code is available at <a href="https://github.com/kostaspardalis/moosic.me" target="_blank"><i class="fa fa-github"></i> Github</a>.
+				    </p>
+
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -141,7 +144,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<script src="/javascript/lastfm.js"></script>

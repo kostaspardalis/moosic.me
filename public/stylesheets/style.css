@@ -3,10 +3,9 @@ body {
 	color: #777777;
 	margin: 60px 0;
 	min-height: 100%;
-	font-family: 'Open Sans', sans-serif;;
+	font-family: 'Open Sans', sans-serif;
 	font-weight: 600;
 }
-
 
 #instructions {
 	font-size: 20px;
@@ -18,7 +17,6 @@ body {
 	padding-top: 50px;
 	color: #a04162;
 }
-
 
 #about {
 	font-size: 14px;
@@ -50,6 +48,28 @@ input[type=submit] {
 	color: #ffffff;
 }
 
+#track-inputs {
+	position: relative;
+}
+
+#suggestions {
+	position: absolute;
+	width: 98%;
+	padding: 0;
+	list-style-type: none;
+	z-index: 1000;
+}
+
+#suggestions li {
+	padding: 8px 15px;
+	background-color: #F8F8F8;
+	cursor: pointer;
+}
+
+#suggestions li:hover {
+	background-color: #e6e6e6;
+}
+
 .btn-purple-lg {
 	background-color: #a04162;
 	color: #ffffff;
@@ -59,10 +79,10 @@ input[type=submit] {
 }
 
 input::-webkit-input-placeholder {
-	color: #c895a7;
+  color: #c895a7;
 }
 input:-moz-placeholder {
-	color: #c895a7;
+  color: #c895a7;
 }
 
 #playlist-row {
@@ -90,7 +110,7 @@ input:-moz-placeholder {
 	color: #ffffff;
 	font-size: 20px;
 	margin-bottom: 20px;
-	posotion: relative;
+	position: relative;
 }
 
 .navbar-brand {
@@ -103,23 +123,31 @@ input:-moz-placeholder {
 }
 
 .btn-in-input > button {
-	width: 26px;
-	background-color: #f8f8f8;
-	color: #a04162;
+	background-color: #A04162;
+	color: #f8f8f8;
 	margin-top: 0px;
-	padding: 0;
-	border-style: solid;
-	border-color: #c895a7;
+	position: relative;
+	top: 1px;
+	border: none;
+	border-radius: 1px;
+	font-size: 18px;
+	padding: 6px 0px;
+	width: 32px;
 	margin-right: 2px;
+	line-height: 1;
 }
 
 .btn-in-input {
-	margin-left: -58px;	
+	margin: 0 0 0 -69px;
+	padding: 0;
+	text-align: right;
+	min-width: 64px;
 	display: none;
 	z-index: 1000;
+	line-height: 1;
 }
 
-input[name=name]:focus + .btn-in-input, 
+input[name=name]:focus + .btn-in-input,
 input[name=name]:hover + .btn-in-input,
 .btn-in-input:hover {
 	display: inline-block;
@@ -135,9 +163,9 @@ input[name=name]:hover + .btn-in-input,
 	z-index: 1000;
 	transform: translate(-50%,-50%);
 	-moz-transform:translate(-50%,-50%);
-	-webkit-transform:translate(-50%,-50%);  
-	-o-transform:translate(-50%,-50%);  
-	-ms-transform:translate(-50%,-50%); 
+	-webkit-transform:translate(-50%,-50%);
+	-o-transform:translate(-50%,-50%);
+	-ms-transform:translate(-50%,-50%);
 	display: none;
 }
 
@@ -186,4 +214,10 @@ input[name=name]:hover + .btn-in-input,
 	line-height: 100%;
 	top: -4px;
 	padding: 0;
+}
+
+@media screen and (max-width: 400px) {
+	#instructions {
+		font-size: 18px;
+	}
 }

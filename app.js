@@ -7,13 +7,12 @@ var app = express();
 var favicon = require("serve-favicon");
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler');
-var morgan = require('morgan');
 
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(morgan('combined'))
+app.set('trust proxy', true);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 app.use(bodyParser.urlencoded({

@@ -1,6 +1,6 @@
 
 var spotify = {
-	client_id : '*************************', // <- Enter the Client ID
+	client_id : '***************************', // <- Enter the Client ID
 	callback_url : "http://YOUR_DOMAIN/spotify/callback", // <- Enter the Redirect URI
 	access_token : null,
 
@@ -105,36 +105,35 @@ var spotify = {
 	},
 
 	searchTracks: function (callback) {
-		var calls = new Array();
 
 		var pl = getPlaylist().getTracks()
 		var tracks = new Array();
 		var tracksSearch = 0;
+		var _this = this;
 
 		for (x in pl) {
 			$.ajax({
-		    	url : 'https://api.spotify.com/v1/search',
+				url : 'https://api.spotify.com/v1/search',
 				method : "GET",
 				async: false,
 				headers : {
-					'Authorization' : 'Bearer ' + this.access_token
+					'Authorization' : 'Bearer ' + _this.access_token
 				},
 				data: {
 					type : "track",
-					q : x,
+					q : x.replace(".", ""),
 					limit: 1
 				}
 			}).done(function( data ) {
-				if (typeof data.tracks.items[0] != "undefined") {
-					tracks.push(data.tracks.items[0].uri)
-				}
-				tracksSearch += 1;
-			}).fail(function( jqXHR, textStatus ) {
-				hideLoading();
-				$("#playlist-row").show();
-				alert("An unexpected error has occurred. Message:" + textStatus);
-			});
 
+					if (typeof data.tracks.items[0] != "undefined") {
+						tracks.push(data.tracks.items[0].uri)
+					}
+					tracksSearch += 1;
+
+			}).fail(function () {
+				// alert("error");
+			});
 		}
 
 		var si = setInterval(function () {

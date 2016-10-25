@@ -10,7 +10,7 @@ $(document).ready(function () {
 			$("#duration").prop( "disabled", false );
 		}
 	});
-	
+
 	$("#duration").on('change keydown keypress keyup', function () {
 		if ($.trim($("#duration").val()) != "") {
 				$("#number").prop( "disabled", true );
@@ -18,62 +18,103 @@ $(document).ready(function () {
 			$("#number").prop( "disabled", false );
 		}
 	});
-	
+
 	$("#track-inputs").on('click', '.add-track', function (e) {
 		e.preventDefault();
-		
+
 		input.addTrack(this);
-	}) 
-	
+	})
+
 	$("#track-inputs").on('click', '.remove-track', function (e) {
 		e.preventDefault();
 		input.removeTrack(this);
-	}) 
-	
+	})
+
 	$("#new-playlist").click(function () {
 		createNewPlaylist();
 	})
-	
+
 	$("#add-spotify").click(function () {
 		spotify.addPlaylist();
 	})
 
 	$("#create-form").submit(function (e) {
 		e.preventDefault();
-		
+
 		clearWarnings(); // clear error messages from the form
-		
+
 		if (validate()) { // check the form's data
 			clearData(); // clear previous playlist
 			generatePlaylist();
 			hideForm();
 		}
 	});
-	
+
+	$("#track-inputs").on('keyup', 'input[name="name"]', debounce(function () {
+		$("#suggestions").text("")
+		var title = $(this).val();
+		var thisInput = $(this);
+		if (title.trim() != "") {
+			lastfm.searchTrack(title, function (titles) {
+				for (var i=0; i<titles.length; i++) {
+					$("#suggestions").append("<li>" + titles[i].name + " " +  titles[i].artist +"</li>");
+				}
+				$("#suggestions > li").bind("click", function () {
+					thisInput.val($(this).text());
+					$("#suggestions").text("");
+					$("#suggestions > li").unbind('click');
+				})
+				$(document).bind("click", function(e) {
+					if (e.target.id != "suggestions") {
+						$("#suggestions").text("");
+					}
+				});
+
+				var top = thisInput.outerHeight(true) + thisInput.position().top;
+				$("#suggestions").css({"top": top + "px"})
+			});
+		}
+	}, 500));
+
 });
 
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
 function generatePlaylist () {
-	
+
 	showLoading();
 	loadingMsg("Searching for these tracks.")
-	
+
 	lastfm.searchTracks(user.getTracks(), function (name_artist) {
-		
+
 		lastfm.getTracksInfo(name_artist, function (tracks) {
-			
+
 			if (user.getDuration() != null && !checkMinDuration(tracks)) {
 				return false;
 			}
-			
+
 			loadingMsg("Searching for similar tracks.")
 			lastfm.getSimilars(tracks, function (tracks) {
-				
+
 				loadingMsg("Generating playlist.")
 				createPlaylist(tracks, function () {
-					
+
 					viewPlaylist();
 					hideLoading();
-					
+
 				})
 			})
 		})
@@ -81,15 +122,15 @@ function generatePlaylist () {
 }
 
 function createPlaylist(tracks, callback) {
-	
+
 	if (user.getLessSimilar()) {
 		for (var i=0; i<tracks.length; i++) {
-			tracks[i].similar.reverse(); 
+			tracks[i].similar.reverse();
 		}
 	}
-	
+
 	playlist = new Playlist();
-	
+
 	var songsStop = (user.getNumber() != null) ? user.getNumber() : 50;
 
 	var length = tracks.length;
@@ -99,20 +140,20 @@ function createPlaylist(tracks, callback) {
 	var maxDuration = durationControl(tracks);
 
 	var maxSongs = new Array();
-	
+
 	for (var j=0; j<length; j++) {
 		maxSongs.push((j+1) * div)
 	}
-	
+
 	for (var j=0; j<(songsStop-(div * length)); j++) {
 		maxSongs[j] += 1;
 		for (var k=j+1; k<length; k++) {
 			maxSongs[k] += 1;
 		}
 	}
-	
+
 	for(var i=0;i<tracks.length;i++) {
-		
+
 		var t = tracks[i];
 
 		playlist.add({
@@ -121,15 +162,15 @@ function createPlaylist(tracks, callback) {
 			duration: t.duration,
 			cover: (t.cover != null) ? t.cover : "/images/nocover.png"
 		})
-		
+
 		for(var j=0;j<t.similar.length;j++) {
-			
+
 			var ts = t.similar[j];
-			
+
 			if(user.getDuration() != null  && (maxDuration[i] == j || maxDuration[i] == null)) {
 				break;
 			}
-			
+
 			if (user.getDuration() == null && playlist.getNumber() >= maxSongs[i]) {
 				break;
 			}
@@ -140,65 +181,65 @@ function createPlaylist(tracks, callback) {
 				duration: ts.duration,
 				cover: (ts.cover != null) ? ts.cover : "/images/nocover.png"
 			})
-	
+
 		}
 
 	}
-	
+
 	callback();
 }
 
 
 function durationControl(tracks) {
-	
+
 	if(user.getDuration() != null) {
 		var similar_length = 0;
-		
+
 		var r = new Array();
-		
+
 		for (var i=0; i<tracks.length; i++) {
 			if (tracks[i].similar.length > similar_length) {
 				similar_length = tracks[i].similar.length;
 			}
 			r[i] = null;
 		}
-		
+
 		var totalDuration = 0;
 		var check = new Object();
-		
+
 		for (var j=0; j<tracks.length; j++) {
 
 			var t = tracks[j];
 			var key = t.name + " - " + t.artist;
-			
+
 			if (!check.hasOwnProperty(key)) {
 				check[key] = true;
-				totalDuration += t.duration;	
+				totalDuration += t.duration;
 			}
-			
+
 		}
-		
+
 		for (var i=0; i<similar_length; i++) {
-			
+
 			for (var j=0; j<tracks.length; j++) {
-				
+
 				if (typeof tracks[j].similar[i] != "undefined") {
-					
+
 					var t = tracks[j].similar[i];
 					var key = t.name + " - " + t.artist;
-					
+
 					if (!check.hasOwnProperty(key)) {
 						check[key] = true;
-						
+
 						totalDuration += t.duration;
 						r[j] = i;
-						
+
 						if (totalDuration > user.getDuration()) {
 							return r
-						}					
+						}
 					}
 				}
-				
+
 			}
 		}
 	} else {
@@ -207,50 +248,50 @@ function durationControl(tracks) {
 }
 
 function viewPlaylist() {
-	
+
 	var p = playlist.getTracks();
-	
+
 	for (song in p) {
-		
+
 		var duration = '<span class="duration-span">' + getMinSec(p[song].duration) + '</span>';
-		
+
 		var img = "<img src='" + p[song].cover + "' onerror='imageError(this);'>";
-		
+
 		$("#playlist-ul").append('<li class="list-group-item">' + img + " " + song + " " + duration + '</li>')
-	
+
 	}
-		
+
 	$("#number-of-tracks").html(playlist.getNumber() + " tracks");
 	$("#total-duration").html(playlistDuration(playlist.getDuration()));
-	
+
 	showPlaylist();
 }
 
 function checkMinDuration(tracks) {
 	var totalDuration = 0;
 	var forcheck = new Object();
-	
+
 	for (var i=0; i<tracks.length; i++) {
-		
+
 		var t = tracks[i];
 		var key = t.name + " - " + t.artist;
-		
+
 		if (!forcheck.hasOwnProperty(key)) {
 			forcheck[key] = true;
-			totalDuration += t.duration;					
+			totalDuration += t.duration;
 		}
-		
+
 	}
-	
+
 	if (totalDuration > user.getDuration()) {
 		showForm();
 		hideLoading()
-		
+
 		var content = "Minimum duration is " + Math.ceil(totalDuration / 1000 / 60) + " minutes.";
 		var elem = $("#duration");
-		
+
 		input.warning(elem, content);
-		
+
 		return false;
 	}
 	return true;
@@ -259,34 +300,34 @@ function checkMinDuration(tracks) {
 
 function validate() {
 	clearWarnings();
-	
+
 	var ok = true;
 
 	$('input[name="name"]').each(function (index,element) {
-		
+
 		if ($.trim($(this).val()) == "") {
 			var popcontent;
-			
+
 			if (index == 0) {
 				popcontent = "Please enter a track."
 			} else {
 				popcontent = "Please enter a track or delete this field."
 			}
-			
+
 			input.warning($(this), popcontent);
-			
+
 			ok = false;
 		}
 	});
-	
+
 	if(!ok) {
 		return false;
 	}
-	
+
 	var number = $.trim($("#number").val());
-	
+
 	if ((number != "" && isNaN(number)) || parseInt(number) < user.getTracks().length || parseInt(number) > 250) {
-		
+
 		var popcontent;
 		if (number != "" && isNaN(number)) {
 			popcontent = "Please give a number or leave empty.";
@@ -295,21 +336,21 @@ function validate() {
 		} else {
 			popcontent = "Maximum number of tracks is 250";
 		}
-		
+
 		input.warning($("#number"), popcontent);
-		
+
 		ok = false;
 	}
-	
+
 	var duration = $.trim($("#duration").val());
-	
+
 	if (duration != "" && isNaN(duration)) {
-		
+
 		input.warning($("#duration"), "Please give a number or leave empty.");
-		
+
 		ok = false;
 	}
-	
+
 	return ok;
 }
 
@@ -329,7 +370,7 @@ function clearData() {
 function getMinSec(t) {
 	var sec = (t / 1000) % 60;
 	var min = Math.floor(t / 1000 / 60);
-	
+
 	return min + ":" + ((sec < 10) ? "0" : "") + sec;
 }
 
@@ -345,7 +386,7 @@ function playlistDuration(t) {
 	var hrs = Math.floor(t / 1000 / 60 / 60);
 
 	if (hrs > 0 ) {
-		return hrs + ((hrs == 1) ? " hour " : " hours ") + " " 
+		return hrs + ((hrs == 1) ? " hour " : " hours ") + " "
 				+ ((min < 10) ? "0" : "") + min + ((min == 1) ? " minute " : " minutes ")
 	} else {
 		return ((min < 10) ? "0" : "") + min + ((min == 1) ? " minute " : " minutes ")
@@ -383,9 +424,9 @@ function loadingMsg(msg) {
 
 function trackError(x, msg) {
 	showForm();
-	
+
 	input.warning($('input:eq(' + x + ')', "#track-inputs"), msg);
-	
+
 	hideLoading();
 	return false;
 }
@@ -405,7 +446,7 @@ function showPlaylist() {
 }
 
 var input = {
-		
+
 	warning : function (elem, content) {
 		elem.css("border", "3px solid #ec5a6d");
 		elem.popover({
@@ -417,45 +458,44 @@ var input = {
 				$(this).popover('destroy')
 			});
 	},
-	
+
 	addTrack : function (elem) {
-		$(elem).parent().after('<input type="text" name="name" placeholder="Enter another track"><span class="btn-in-input"><button class="add-track">+</button><button class="remove-track">&times;</button></span>');
+		$(elem).parent().after('<input type="text" name="name" placeholder="Enter another track" autocomplete="off"><span class="btn-in-input"><button type="button" class="add-track" title="Add track">+</button><button type="button" class="remove-track" title="Remove this track">&times;</button></span>');
 	},
-	
+
 	removeTrack : function (elem) {
 		$(elem).parent().prev("input[name=name]").popover('destroy')
 		$(elem).parent().prev("input[name=name]").remove();
 		$(elem).parent().remove();
 		$('.popover').popover('show');
 	}
-	
+
 }
 
 var user = {
-		
+
 	getNumber : function () {
 		return ($.trim($("#number").val()) != "") ? parseInt($("#number").val()) : null
 	},
-	
+
 	getDuration : function () {
 		return ($.trim($("#duration").val()) != "") ? parseInt($("#duration").val()) * 60 * 1000 : null
 	},
-	
+
 	getTracks : function() {
 		var userTracks = $('input[name="name"]');
-		
+
 		var titles = new Array();
 
 		userTracks.each(function () {
 			titles.push($(this).val());
 		});
-		
+
 		return titles;
 	},
-	
+
 	getLessSimilar: function() {
 		return $("#dissimilar").prop("checked");
 	}
-	
-}
 
+}
